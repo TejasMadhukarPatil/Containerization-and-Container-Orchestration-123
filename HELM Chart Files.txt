@@ -1,0 +1,102 @@
+✅ Chart.yaml
+apiVersion: v2
+name: mern-chart
+description: A HELM chart for deploying a MERN stack application
+version: 0.1.0
+appVersion: "1.0"
+
+✅ values.yaml
+frontend:
+  image: your-dockerhub-username/frontend:latest
+  replicas: 2
+  port: 3000
+
+backend:
+  image: your-dockerhub-username/backend:latest
+  replicas: 2
+  port: 5000
+  mongoUrl: mongodb://mongo-service:27017/mern
+
+mongo:
+  image: mongo
+  port: 27017
+
+
+
+✅ frontend-deployment.yaml (template)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+spec:
+  replicas: {{ .Values.frontend.replicas }}
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+      - name: frontend
+        image: {{ .Values.frontend.image }}
+        ports:
+        - containerPort: {{ .Values.frontend.port }}
+
+
+
+✅ backend-deployment.yaml (template)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+spec:
+  replicas: {{ .Values.backend.replicas }}
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+      - name: backend
+        image: {{ .Values.backend.image }}
+        ports:
+        - containerPort: {{ .Values.backend.port }}
+        env:
+        - name: MONGO_URL
+          value: {{ .Values.backend.mongoUrl }}
+
+
+
+✅ mongo-deployment.yaml (template)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongo
+  template:
+    metadata:
+      labels:
+        app: mongo
+    spec:
+      containers:
+      - name: mongo
+        image: {{ .Values.mongo.image }}
+        ports:
+        - containerPort: {{ .Values.mongo.port }}
+
+
+
+
+
+
+
+

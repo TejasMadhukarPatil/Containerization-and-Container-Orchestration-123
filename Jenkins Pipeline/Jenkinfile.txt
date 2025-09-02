@@ -1,0 +1,21 @@
+✅ Jenkinsfile
+pipeline {
+  agent any
+
+  environment {
+    DOCKERHUB_CREDENTIALS = credentials('dockerhub-creds')
+  }
+
+  stages {
+    stage('Clone Repos') {
+      steps {
+        git url: 'https://github.com/your-org/frontend.git', branch: 'main'
+        git url: 'https://github.com/your-org/backend.git', branch: 'main'
+      }
+    }
+
+    stage('Build & Push Docker Images') {
+      steps {
+        script {
+          docker.build("your-dockerhub-username/fron
+
